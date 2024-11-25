@@ -59,10 +59,9 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-option(BUILD_TESTS "Build tests" ON)
-option(BUILD_EXAMPLE "Build example" ON)
-option(BUILD_PYTHON "Build Python bindings" ON)
-option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(BUILD_TESTS "Build tests" OFF)
+option(BUILD_EXAMPLE "Build example" OFF)
+option(BUILD_PYTHON "Build Python bindings" OFF)
 option(ADD_CONDA_TO_RPATH "Add conda to rpath" OFF)
 
 if(DEFINED ENV{CONDA_PREFIX})
