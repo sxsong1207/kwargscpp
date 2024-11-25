@@ -11,18 +11,10 @@ endif()
 set(MODULE_NAME bind_pybind11)
 nanobind_add_module(${MODULE_NAME} NB_STATIC STABLE_ABI FREE_THREADED ${DIST_FLAGS} bind_pybind11.cpp)
 
-# target_link_libraries(${MODULE_NAME} PRIVATE nanobind)
+target_link_libraries(${MODULE_NAME} PRIVATE kwargscpp)
 target_compile_definitions(${MODULE_NAME} PRIVATE VERSION_INFO=${PROJECT_VERSION})
 
 set_target_properties(${MODULE_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN/../..;${CMAKE_INSTALL_RPATH}")
-
-nanobind_add_stub(${MODULE_NAME}_stub
-  MODULE ${MODULE_NAME}
-  OUTPUT ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${MODULE_NAME}.pyi
-  PYTHON_PATH $<TARGET_FILE_DIR:${MODULE_NAME}>
-  MARKER_FILE ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/py.typed
-  DEPENDS ${MODULE_NAME}
-)
 
 add_custom_target(pytest_${MODULE_NAME}
   COMMAND PYTHONPATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${Python_EXECUTABLE} -m pytest ${CMAKE_CURRENT_SOURCE_DIR}/tests_pybind11.py

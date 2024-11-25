@@ -3,7 +3,7 @@
 
 #include <nanobind/nanobind.h>
 
-#include "kwargspp/kwargs.h"
+#include "kwargscpp/kwargs.h"
 
 namespace nb = nanobind;
 
@@ -20,13 +20,13 @@ overloaded(Ts...) -> overloaded<Ts...>;
 
 // // Forward declaration of type_caster for DictType
 template <>
-struct type_caster<kwargspp::ValueType>;
+struct type_caster<kwargscpp::ValueType>;
 
 // Type caster for ValueType
 template <>
-struct type_caster<kwargspp::ValueType> {
+struct type_caster<kwargscpp::ValueType> {
  public:
-  NB_TYPE_CASTER(kwargspp::ValueType, const_name("kwargs::ValueType"));
+  NB_TYPE_CASTER(kwargscpp::ValueType, const_name("kwargs::ValueType"));
 
   bool from_python(nb::handle src, uint8_t flags, cleanup_list* cleanup) noexcept {
     if (nb::isinstance<nb::int_>(src)) {
@@ -42,7 +42,7 @@ struct type_caster<kwargspp::ValueType> {
       value = nb::cast<std::string>(src);
       return true;
     } else if (nb::isinstance<nb::list>(src)) {
-      std::vector<kwargspp::ValueType> list;
+      std::vector<kwargscpp::ValueType> list;
       nb::object obj = nb::borrow<nb::object>(src);
       if (load_list(obj, list, flags, cleanup)) {
         value = list;
@@ -50,7 +50,7 @@ struct type_caster<kwargspp::ValueType> {
       }
     } else if (nb::isinstance<nb::dict>(src)) {
       // Recursively load the dictionary
-      kwargspp::DictType dict;
+      kwargscpp::DictType dict;
       nb::object obj = nb::borrow<nb::object>(src);
       if (load_dict(obj, dict, flags, cleanup)) {
         value = dict;
@@ -60,18 +60,18 @@ struct type_caster<kwargspp::ValueType> {
     return false;
   }
 
-  static nb::handle from_cpp(const kwargspp::ValueType& src, rv_policy policy, cleanup_list* cleanup) noexcept {
+  static nb::handle from_cpp(const kwargscpp::ValueType& src, rv_policy policy, cleanup_list* cleanup) noexcept {
     return std::visit(
         overloaded{[&](intmax_t v) { return nb::int_(v).release(); },
                    [&](uintmax_t v) { return nb::int_(v).release(); },
                    [&](double v) { return nb::float_(v).release(); },
                    [&](bool v) { return nb::bool_(v).release(); },
                    [&](const std::string& v) { return nb::str(v.c_str(), v.length()).release(); },
-                   [&](const std::vector<kwargspp::ValueType>& vec) -> nb::handle {
-                     // Convert kwargspp::ValueType to Python list
+                   [&](const std::vector<kwargscpp::ValueType>& vec) -> nb::handle {
+                     // Convert kwargscpp::ValueType to Python list
                      nb::list py_list;
                      for (const auto& val : vec) {
-                       nb::handle h = type_caster<kwargspp::ValueType>::from_cpp(val, policy, cleanup);
+                       nb::handle h = type_caster<kwargscpp::ValueType>::from_cpp(val, policy, cleanup);
                        if (!h) {
                          return nb::handle();  // Handle casting failure
                        }
@@ -79,11 +79,11 @@ struct type_caster<kwargspp::ValueType> {
                      }
                      return py_list.release();
                    },
-                   [&](const kwargspp::DictType& dict) -> nb::handle {
-                     // Convert kwargspp::DictType to Python dict
+                   [&](const kwargscpp::DictType& dict) -> nb::handle {
+                     // Convert kwargscpp::DictType to Python dict
                      nb::dict py_dict;
                      for (const auto& [key, val] : dict) {
-                       nb::handle h = type_caster<kwargspp::ValueType>::from_cpp(val, policy, cleanup);
+                       nb::handle h = type_caster<kwargscpp::ValueType>::from_cpp(val, policy, cleanup);
                        if (!h) {
                          return nb::handle();  // Handle casting failure
                        }
@@ -95,15 +95,15 @@ struct type_caster<kwargspp::ValueType> {
   }
 
  private:
-  // Helper function to recursively load a Python list into std::vector<kwargspp::ValueType>
-  bool load_list(nb::object src, std::vector<kwargspp::ValueType>& dest, uint8_t flags, cleanup_list* cleanup) {
+  // Helper function to recursively load a Python list into std::vector<kwargscpp::ValueType>
+  bool load_list(nb::object src, std::vector<kwargscpp::ValueType>& dest, uint8_t flags, cleanup_list* cleanup) {
     if (!nb::isinstance<nb::list>(src)) return false;
 
     nb::list py_list = nb::borrow<nb::list>(src);
     for (auto item : py_list) {
-      kwargspp::ValueType val;
+      kwargscpp::ValueType val;
       nb::handle value_handle = item;
-      type_caster<kwargspp::ValueType> value_caster;
+      type_caster<kwargscpp::ValueType> value_caster;
       if (!value_caster.from_python(value_handle, flags, cleanup)) {
         return false;
       }
@@ -113,17 +113,17 @@ struct type_caster<kwargspp::ValueType> {
     }
     return true;
   }
-  // Helper function to recursively load a Python dict into kwargspp::DictType
-  bool load_dict(nb::object src, kwargspp::DictType& dest, uint8_t flags, cleanup_list* cleanup) {
+  // Helper function to recursively load a Python dict into kwargscpp::DictType
+  bool load_dict(nb::object src, kwargscpp::DictType& dest, uint8_t flags, cleanup_list* cleanup) {
     if (!nb::isinstance<nb::dict>(src)) return false;
 
     nb::dict py_dict = nb::borrow<nb::dict>(src);
     for (auto item : py_dict) {
       std::string key = nb::cast<std::string>(item.first);
 
-      kwargspp::ValueType val;
+      kwargscpp::ValueType val;
       nb::handle value_handle = item.second;
-      type_caster<kwargspp::ValueType> value_caster;
+      type_caster<kwargscpp::ValueType> value_caster;
       if (!value_caster.from_python(value_handle, flags, cleanup)) {
         return false;
       }

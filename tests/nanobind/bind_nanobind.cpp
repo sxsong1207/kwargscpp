@@ -6,34 +6,34 @@
 
 #include <variant>
 
-#include "kwargspp/kwargs.h"
-#include "kwargspp/nanobind/binding.h"
+#include "kwargscpp/kwargs.h"
+#include "kwargscpp/nanobind/binding.h"
 
 namespace nb = nanobind;
 using namespace nb::literals;
 
-kwargspp::DictType echo_dict(const kwargspp::DictType& kwargs) {
+kwargscpp::DictType echo_dict(const kwargscpp::DictType& kwargs) {
     // Optionally, implement checks to handle or prevent cyclic references
     return kwargs;
 }
 
-kwargspp::DictType generate_dict()
+kwargscpp::DictType generate_dict()
 {
-  kwargspp::DictType dict;
-  dict["int"] = kwargspp::ValueType(42);
-  dict["double"] = kwargspp::ValueType(3.14);
-  dict["bool"] = kwargspp::ValueType(true);
-  dict["string"] = kwargspp::ValueType("hello");
-  kwargspp::DictType nested_dict;
-  nested_dict["inner_key"] = kwargspp::ValueType(42);
-  dict["nested"] = kwargspp::ValueType(nested_dict);
+  kwargscpp::DictType dict;
+  dict["int"] = kwargscpp::ValueType(42);
+  dict["double"] = kwargscpp::ValueType(3.14);
+  dict["bool"] = kwargscpp::ValueType(true);
+  dict["string"] = kwargscpp::ValueType("hello");
+  kwargscpp::DictType nested_dict;
+  nested_dict["inner_key"] = kwargscpp::ValueType(42);
+  dict["nested"] = kwargscpp::ValueType(nested_dict);
   
-  std::vector<kwargspp::ValueType> vec;
+  std::vector<kwargscpp::ValueType> vec;
   vec.push_back(42);
   vec.push_back(3.14);
   vec.push_back("hello");
   vec.push_back(true);
-  dict["vector_val"] = kwargspp::ValueType(vec);
+  dict["vector_val"] = kwargscpp::ValueType(vec);
   return dict;
 }
 

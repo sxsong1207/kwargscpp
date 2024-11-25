@@ -1,0 +1,1 @@
+add_test(NAME test_cmake_build COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/test_cmake_build.sh)

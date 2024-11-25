@@ -1,4 +1,4 @@
-# kwargspp
+# kwargscpp
 
 A simple, header-only C++ library facilitating seamless communication between C++ and Python. This library leverages `std::unordered_map` to emulate Python's `kwargs` with `dict`, supporting various basic data types. It integrates effortlessly with Python using pybind11 and nanobind, making it an ideal choice for developers looking to bridge C++ performance with Python's ease of use.
 

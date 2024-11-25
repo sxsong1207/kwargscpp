@@ -11,7 +11,7 @@ endif()
 set(MODULE_NAME bind_nanobind)
 nanobind_add_module(${MODULE_NAME} NB_STATIC STABLE_ABI FREE_THREADED ${DIST_FLAGS} bind_nanobind.cpp)
 
-# target_link_libraries(${MODULE_NAME} PRIVATE nanobind)
+target_link_libraries(${MODULE_NAME} PRIVATE kwargscpp)
 target_compile_definitions(${MODULE_NAME} PRIVATE VERSION_INFO=${PROJECT_VERSION})
 
 set_target_properties(${MODULE_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN/../..;${CMAKE_INSTALL_RPATH}")

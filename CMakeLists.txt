@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(kwargspp LANGUAGES CXX)
+project(kwargscpp LANGUAGES CXX)
 
 # Read the version.txt file
 file(READ "${CMAKE_SOURCE_DIR}/version" VERSION_CONTENTS)
@@ -86,7 +86,12 @@ if(DEFINED ENV{CONDA_PREFIX})
   message(NOTICE "[CONDA] Setting CMAKE_PREFIX_PATH to ${CMAKE_PREFIX_PATH}")
 endif()
 
-include_directories(include)
+# Define the library, only with include directories
+add_library(kwargscpp INTERFACE)
+target_include_directories(kwargscpp INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
 
 if(BUILD_PYTHON)
   message(STATUS "Building Python bindings")
@@ -135,18 +140,39 @@ if(BUILD_TESTS)
   add_subdirectory(tests)
 endif()
 
-# # Install the targets
-# include(CMakePackageConfigHelpers)
-# configure_package_config_file(
-# cmake/${CMAKE_PROJECT_NAME}Config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
-# INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}
-# PATH_VARS CMAKE_INSTALL_LIBDIR)
+# Install the library target
+install(TARGETS kwargscpp
+  EXPORT ${CMAKE_PROJECT_NAME}Targets
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
 
-# install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
-# DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME})
+# install headers to include directory, keeping the same directory structure
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-# install(
-# EXPORT ${CMAKE_PROJECT_NAME}Targets
-# FILE ${CMAKE_PROJECT_NAME}Targets.cmake
-# NAMESPACE "${CMAKE_PROJECT_NAME}::"
-# DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME})
+# Generate and install the package configuration files
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake"
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
+
+configure_package_config_file(
+  cmake/${CMAKE_PROJECT_NAME}Config.cmake.in
+  "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake"
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}
+  PATH_VARS CMAKE_INSTALL_LIBDIR
+)
+
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake"
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}
+)
+
+# Install the export set
+install(
+  EXPORT ${CMAKE_PROJECT_NAME}Targets
+  FILE ${CMAKE_PROJECT_NAME}Targets.cmake
+  NAMESPACE "${CMAKE_PROJECT_NAME}::"
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME})
