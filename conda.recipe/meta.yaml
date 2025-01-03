@@ -8,7 +8,30 @@ source:
 build:
   noarch: generic
   number: 0
-  string: "0"
+  # The library is header only, so we do not need
+  # to export the compiler run-time libraries.
+  # They are just needed during the build to perform some checks.
+  ignore_run_exports:
+    - {{ stdlib('c') }}
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+
+requirements:
+  build:
+    - cmake
+    - make # [unix]
+    - {{ compiler('cxx') }}
+  host: [] # no dependencies
+
+test:
+  commands:
+    - test -d ${PREFIX}/include/kwargscpp # [unix]
+    - test -f ${PREFIX}/include/kwargscpp/kwargs.h # [unix]
+    - test -f ${PREFIX}/include/kwargscpp/kwargs_imph.h # [unix]
+    - test -f ${PREFIX}/lib/cmake/kwargscpp/kwargscppConfig.cmake # [unix]
+    - if not exist %LIBRARY_PREFIX%\include\kwargscpp\kwargs.h (exit 1) # [win]
+    - if not exist %LIBRARY_PREFIX%\include\kwargscpp\kwargs_imph.h (exit 1) # [win]
+    - if not exist %LIBRARY_PREFIX%\lib\cmake\kwargscpp\kwargscppConfig.cmake (exit 1) # [win]
 
 about:
   home: "https://github.com/sxsong1207/kwargscpp"
