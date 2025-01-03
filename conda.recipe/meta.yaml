@@ -1,0 +1,16 @@
+package:
+  name: kwargscpp
+  version: "0.1.0"
+
+source:
+  path: ..
+
+build:
+  noarch: generic
+  number: 0
+  string: "0"
+
+about:
+  home: "https://github.com/sxsong1207/kwargscpp"
+  license: "MIT"
+  summary: "A C++ library for argument handling."
