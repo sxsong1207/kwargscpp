@@ -28,6 +28,8 @@ result = '{major}.{minor}.{patch}'
 
 [tool.scikit-build]
 wheel.packages = ["src_python/kwargscpp"]
+wheel.py-api = "py2.py3"
+wheel.platlib = false
 minimum-version = "0.10"
 build-dir = "build/{wheel_tag}"
 cmake.args = []
